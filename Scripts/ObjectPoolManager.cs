@@ -51,14 +51,14 @@ namespace UniT.Pooling
 
         void IObjectPoolManager.Load(object key, int count)
         {
-            var prefab = this.keyToPrefab.GetOrAdd(key, () => this.assetsManager.Load<GameObject>(key));
+            var prefab = this.keyToPrefab.GetOrAdd(key, state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
             this.Load(prefab, count);
         }
 
         #if UNIT_UNITASK
         async UniTask IObjectPoolManager.LoadAsync(object key, int count, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var prefab = await this.keyToPrefab.GetOrAddAsync(key, () => this.assetsManager.LoadAsync<GameObject>(key, progress, cancellationToken));
+            var prefab = await this.keyToPrefab.GetOrAddAsync(key, state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (this.assetsManager, key, progress, cancellationToken));
             this.Load(prefab, count);
         }
         #else
@@ -79,7 +79,7 @@ namespace UniT.Pooling
 
         GameObject IObjectPoolManager.Spawn(object key, Vector3? position, Quaternion? rotation, Transform? parent, bool spawnInWorldSpace)
         {
-            var prefab = this.keyToPrefab.GetOrAdd(key, () => this.assetsManager.Load<GameObject>(key));
+            var prefab = this.keyToPrefab.GetOrAdd(key, state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
             return this.Spawn(prefab, position, rotation, parent, spawnInWorldSpace);
         }
 
@@ -127,16 +127,16 @@ namespace UniT.Pooling
 
         private void Load(GameObject prefab, int count)
         {
-            this.prefabToPool.GetOrAdd(prefab, () =>
+            this.prefabToPool.GetOrAdd(prefab, state =>
             {
-                var pool = ObjectPool.Construct(prefab, this.poolsContainer);
-                pool.Instantiated += this.OnInstantiated;
-                pool.Spawned      += this.OnSpawned;
-                pool.Recycled     += this.OnRecycled;
-                pool.CleanedUp    += this.OnCleanedUp;
-                this.logger.Debug($"Instantiated {pool.name}");
+                var pool = ObjectPool.Construct(state.prefab, state.@this.poolsContainer);
+                pool.Instantiated += state.@this.OnInstantiated;
+                pool.Spawned      += state.@this.OnSpawned;
+                pool.Recycled     += state.@this.OnRecycled;
+                pool.CleanedUp    += state.@this.OnCleanedUp;
+                state.@this.logger.Debug($"Instantiated {pool.name}");
                 return pool;
-            }).Load(count);
+            }, (@this: this, prefab)).Load(count);
         }
 
         private GameObject Spawn(GameObject prefab, Vector3? position, Quaternion? rotation, Transform? parent, bool spawnInWorldSpace)
