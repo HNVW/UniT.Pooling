@@ -23,7 +23,9 @@ namespace UniT.Pooling
 
         public void Load(GameObject prefab, int count = 1);
 
+        #if !UNITY_WEBGL
         public void Load(object key, int count = 1);
+        #endif
 
         public GameObject Spawn(GameObject prefab, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true);
 
@@ -63,7 +65,9 @@ namespace UniT.Pooling
 
         #region Implicit Key
 
+        #if !UNITY_WEBGL
         public void Load<T>(int count = 1) => this.Load(typeof(T).GetKey(), count);
+        #endif
 
         public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null) => this.Spawn<T>(typeof(T).GetKey(), position, rotation, parent);
 

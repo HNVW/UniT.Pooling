@@ -49,11 +49,13 @@ namespace UniT.Pooling
 
         void IObjectPoolManager.Load(GameObject prefab, int count) => this.Load(prefab, count);
 
+        #if !UNITY_WEBGL
         void IObjectPoolManager.Load(object key, int count)
         {
             var prefab = this.keyToPrefab.GetOrAdd(key, state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
             this.Load(prefab, count);
         }
+        #endif
 
         #if UNIT_UNITASK
         async UniTask IObjectPoolManager.LoadAsync(object key, int count, IProgress<float>? progress, CancellationToken cancellationToken)
@@ -79,7 +81,14 @@ namespace UniT.Pooling
 
         GameObject IObjectPoolManager.Spawn(object key, Vector3? position, Quaternion? rotation, Transform? parent, bool spawnInWorldSpace)
         {
-            var prefab = this.keyToPrefab.GetOrAdd(key, state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
+            var prefab = this.keyToPrefab.GetOrAdd(key, state =>
+            {
+                #if !UNITY_WEBGL
+                return state.assetsManager.Load<GameObject>(state.key);
+                #else
+                throw new NotSupportedException("Cannot directly Spawn with key on WebGL. Please preload it with `LoadAsync`.");
+                #endif
+            }, (this.assetsManager, key));
             return this.Spawn(prefab, position, rotation, parent, spawnInWorldSpace);
         }
 
