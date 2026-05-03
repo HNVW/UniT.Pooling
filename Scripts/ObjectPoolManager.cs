@@ -26,9 +26,9 @@ namespace UniT.Pooling
         private readonly ILogger        logger;
 
         private readonly Transform                          poolsContainer = new GameObject(nameof(ObjectPoolManager)).DontDestroyOnLoad().transform;
-        private readonly Dictionary<object, GameObject>     keyToPrefab    = new Dictionary<object, GameObject>();
-        private readonly Dictionary<GameObject, ObjectPool> prefabToPool   = new Dictionary<GameObject, ObjectPool>();
-        private readonly Dictionary<GameObject, ObjectPool> instanceToPool = new Dictionary<GameObject, ObjectPool>();
+        private readonly Dictionary<object, GameObject>     keyToPrefab    = new();
+        private readonly Dictionary<GameObject, ObjectPool> prefabToPool   = new();
+        private readonly Dictionary<GameObject, ObjectPool> instanceToPool = new();
 
         [Preserve]
         public ObjectPoolManager(IAssetsManager assetsManager, ILoggerManager loggerManager)
@@ -52,7 +52,7 @@ namespace UniT.Pooling
         #if !UNITY_WEBGL
         void IObjectPoolManager.Load(object key, int count)
         {
-            var prefab = this.keyToPrefab.GetOrAdd(key, state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
+            var prefab = this.keyToPrefab.GetOrAdd(key, static state => state.assetsManager.Load<GameObject>(state.key), (this.assetsManager, key));
             this.Load(prefab, count);
         }
         #endif
@@ -60,7 +60,7 @@ namespace UniT.Pooling
         #if UNIT_UNITASK
         async UniTask IObjectPoolManager.LoadAsync(object key, int count, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var prefab = await this.keyToPrefab.GetOrAddAsync(key, state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (this.assetsManager, key, progress, cancellationToken));
+            var prefab = await this.keyToPrefab.GetOrAddAsync(key, static state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (this.assetsManager, key, progress, cancellationToken));
             this.Load(prefab, count);
         }
         #else
@@ -81,7 +81,7 @@ namespace UniT.Pooling
 
         GameObject IObjectPoolManager.Spawn(object key, Vector3? position, Quaternion? rotation, Transform? parent, bool spawnInWorldSpace)
         {
-            var prefab = this.keyToPrefab.GetOrAdd(key, state =>
+            var prefab = this.keyToPrefab.GetOrAdd(key, static state =>
             {
                 #if !UNITY_WEBGL
                 return state.assetsManager.Load<GameObject>(state.key);
@@ -136,7 +136,7 @@ namespace UniT.Pooling
 
         private void Load(GameObject prefab, int count)
         {
-            this.prefabToPool.GetOrAdd(prefab, state =>
+            this.prefabToPool.GetOrAdd(prefab, static state =>
             {
                 var pool = ObjectPool.Construct(state.prefab, state.@this.poolsContainer);
                 pool.Instantiated += state.@this.OnInstantiated;

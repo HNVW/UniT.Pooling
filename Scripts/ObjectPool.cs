@@ -3,6 +3,7 @@ namespace UniT.Pooling
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using UniT.Extensions;
     using UnityEngine;
 
@@ -12,8 +13,8 @@ namespace UniT.Pooling
 
         [SerializeField] private GameObject prefab = null!;
 
-        private readonly Queue<GameObject>   pooledObjects  = new Queue<GameObject>();
-        private readonly HashSet<GameObject> spawnedObjects = new HashSet<GameObject>();
+        private readonly Queue<GameObject>   pooledObjects  = new();
+        private readonly HashSet<GameObject> spawnedObjects = new();
 
         public static ObjectPool Construct(GameObject prefab, Transform parent)
         {
@@ -63,6 +64,7 @@ namespace UniT.Pooling
             return instance;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true)
         {
             return this.Spawn(position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
@@ -76,6 +78,7 @@ namespace UniT.Pooling
             this.Recycled?.Invoke(instance);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Recycle<T>(T instance) where T : Component
         {
             this.Recycle(instance.gameObject);
