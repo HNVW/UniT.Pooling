@@ -3,14 +3,10 @@ namespace UniT.Pooling
 {
     using System;
     using System.Runtime.CompilerServices;
-    using UniT.Extensions;
-    using UnityEngine;
-    #if UNIT_UNITASK
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    #else
-    using System.Collections;
-    #endif
+    using UniT.Extensions;
+    using UnityEngine;
 
     public interface IObjectPoolManager : IDisposable
     {
@@ -24,9 +20,7 @@ namespace UniT.Pooling
 
         public void Load(GameObject prefab, int count = 1);
 
-        #if !UNITY_WEBGL
-        public void Load(object key, int count = 1);
-        #endif
+        public UniTask LoadAsync(object key, int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public GameObject Spawn(GameObject prefab, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true);
 
@@ -73,10 +67,8 @@ namespace UniT.Pooling
 
         #region Implicit Key
 
-        #if !UNITY_WEBGL
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Load<T>(int count = 1) => this.Load(typeof(T).GetKey(), count);
-        #endif
+        public UniTask LoadAsync<T>(int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(typeof(T).GetKey(), count, progress, cancellationToken);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null) => this.Spawn<T>(typeof(T).GetKey(), position, rotation, parent);
@@ -89,22 +81,6 @@ namespace UniT.Pooling
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Unload<T>() => this.Unload(typeof(T).GetKey());
-
-        #endregion
-
-        #region Async
-
-        #if UNIT_UNITASK
-        public UniTask LoadAsync(object key, int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public UniTask LoadAsync<T>(int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(typeof(T).GetKey(), count, progress, cancellationToken);
-        #else
-        public IEnumerator LoadAsync(object key, int count = 1, Action? callback = null, IProgress<float>? progress = null);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEnumerator LoadAsync<T>(int count = 1, Action? callback = null, IProgress<float>? progress = null) => this.LoadAsync(typeof(T).GetKey(), count, callback, progress);
-        #endif
 
         #endregion
     }
