@@ -52,7 +52,11 @@ namespace UniT.Pooling
         public T Spawn<T>(object key, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) => this.Spawn(key, position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Recycle(Component instance) => this.Recycle(instance.gameObject);
+        public void Recycle(Component instance)
+        {
+            if (!instance) return;
+            this.Recycle(instance.gameObject);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RecycleAll(Component prefab) => this.RecycleAll(prefab.gameObject);

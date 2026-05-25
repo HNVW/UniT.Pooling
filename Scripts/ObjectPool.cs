@@ -89,6 +89,7 @@ namespace UniT.Pooling
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Recycle<T>(T instance) where T : Component
         {
+            if (!instance) return;
             this.Recycle(instance.gameObject);
         }
 
