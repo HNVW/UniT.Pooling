@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Pooling
+namespace UniT.Pooling.Default
 {
     using System;
     using System.Collections.Generic;

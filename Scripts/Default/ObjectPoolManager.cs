@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Pooling
+namespace UniT.Pooling.Default
 {
     using System;
     using System.Collections.Generic;
@@ -18,8 +18,8 @@ namespace UniT.Pooling
     {
         #region Constructor
 
-        private readonly IAssetsManager assetsManager;
-        private readonly ILogger        logger;
+        private readonly IAssetManager assetManager;
+        private readonly ILogger       logger;
 
         private readonly Transform                          poolsContainer = new GameObject(nameof(ObjectPoolManager)).DontDestroyOnLoad().transform;
         private readonly Dictionary<object, GameObject>     keyToPrefab    = new();
@@ -27,10 +27,10 @@ namespace UniT.Pooling
         private readonly Dictionary<GameObject, ObjectPool> instanceToPool = new();
 
         [Preserve]
-        public ObjectPoolManager(IAssetsManager assetsManager, ILoggerManager loggerManager)
+        public ObjectPoolManager(IAssetManager assetManager, ILoggerManager loggerManager)
         {
-            this.assetsManager = assetsManager;
-            this.logger        = loggerManager.GetLogger(this);
+            this.assetManager = assetManager;
+            this.logger       = loggerManager.GetLogger(this);
             this.logger.Debug("Constructed");
         }
 
@@ -47,7 +47,7 @@ namespace UniT.Pooling
 
         async UniTask IObjectPoolManager.LoadAsync(object key, int count, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var prefab = await this.keyToPrefab.GetOrAddAsync(key, static state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (this.assetsManager, key, progress, cancellationToken));
+            var prefab = await this.keyToPrefab.GetOrAddAsync(key, static state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (assetsManager: this.assetManager, key, progress, cancellationToken));
             this.Load(prefab, count);
         }
 
@@ -88,7 +88,7 @@ namespace UniT.Pooling
         {
             if (!this.TryGetPrefab(key, out var prefab)) return;
             this.Unload(prefab);
-            this.assetsManager.Unload(key);
+            this.assetManager.Unload(key);
             this.keyToPrefab.Remove(key);
         }
 
