@@ -18,22 +18,11 @@ namespace UniT.Pooling.Default
 
         public static ObjectPool Construct(GameObject prefab, Transform parent)
         {
-            var pool = new GameObject
-            {
-                name      = $"{prefab.name} pool",
-                transform = { parent = parent },
-            }.AddComponent<ObjectPool>();
+            var gameObject = new GameObject($"{prefab.name} pool") { transform = { parent = parent } };
+            gameObject.SetActive(false);
+            var pool = gameObject.AddComponent<ObjectPool>();
             pool.prefab = prefab;
             return pool;
-        }
-
-        // ReSharper disable once InconsistentNaming
-        public new Transform transform { get; private set; } = null!;
-
-        private void Awake()
-        {
-            this.transform = base.transform;
-            this.gameObject.SetActive(false);
         }
 
         #endregion
@@ -65,7 +54,7 @@ namespace UniT.Pooling.Default
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true)
+        public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) where T : notnull
         {
             return this.Spawn(position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
         }

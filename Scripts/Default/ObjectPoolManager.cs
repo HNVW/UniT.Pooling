@@ -84,12 +84,14 @@ namespace UniT.Pooling.Default
 
         void IObjectPoolManager.Unload(GameObject prefab) => this.Unload(prefab);
 
-        void IObjectPoolManager.Unload(object key)
+        void IObjectPoolManager.Unload(object key) => this.Unload(key);
+
+        void IDisposable.Dispose()
         {
-            if (!this.TryGetPrefab(key, out var prefab)) return;
-            this.Unload(prefab);
-            this.assetManager.Unload(key);
-            this.keyToPrefab.Remove(key);
+            this.keyToPrefab.Keys.SafeForEach(this.Unload);
+            this.prefabToPool.Keys.SafeForEach(this.Unload);
+            if (this.poolsContainer) Object.Destroy(this.poolsContainer.gameObject);
+            this.logger.Debug("Disposed");
         }
 
         #endregion
@@ -162,6 +164,14 @@ namespace UniT.Pooling.Default
             this.prefabToPool.Remove(prefab);
         }
 
+        private void Unload(object key)
+        {
+            if (!this.TryGetPrefab(key, out var prefab)) return;
+            this.Unload(prefab);
+            this.assetManager.Unload(key);
+            this.keyToPrefab.Remove(key);
+        }
+
         private bool TryGetPool(GameObject prefab, [MaybeNullWhen(false)] out ObjectPool pool)
         {
             if (this.prefabToPool.TryGetValue(prefab, out pool)) return true;
@@ -180,29 +190,6 @@ namespace UniT.Pooling.Default
         private void OnSpawned(GameObject      instance) => this.spawned?.Invoke(instance);
         private void OnRecycled(GameObject     instance) => this.recycled?.Invoke(instance);
         private void OnCleanedUp(GameObject    instance) => this.cleanedUp?.Invoke(instance);
-
-        #endregion
-
-        #region Finalizer
-
-        private void Dispose()
-        {
-            this.keyToPrefab.SafeForEach(this.Unload);
-            this.prefabToPool.Keys.SafeForEach(this.Unload);
-            if (this.poolsContainer) Object.Destroy(this.poolsContainer.gameObject);
-        }
-
-        void IDisposable.Dispose()
-        {
-            this.Dispose();
-            this.logger.Debug("Disposed");
-        }
-
-        ~ObjectPoolManager()
-        {
-            this.Dispose();
-            this.logger.Debug("Finalized");
-        }
 
         #endregion
     }

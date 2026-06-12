@@ -49,7 +49,7 @@ namespace UniT.Pooling
         public T Spawn<T>(T prefab, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) where T : Component => this.Spawn(prefab.gameObject, position, rotation, parent, spawnInWorldSpace).GetComponent<T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Spawn<T>(object key, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) => this.Spawn(key, position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
+        public T Spawn<T>(object key, Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) where T : notnull => this.Spawn(key, position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Recycle(Component instance)
@@ -72,19 +72,19 @@ namespace UniT.Pooling
         #region Implicit Key
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public UniTask LoadAsync<T>(int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(typeof(T).GetKey(), count, progress, cancellationToken);
+        public UniTask LoadAsync<T>(int count = 1, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(typeof(T).GetKey(), count, progress, cancellationToken);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null) => this.Spawn<T>(typeof(T).GetKey(), position, rotation, parent);
+        public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) where T : notnull => this.Spawn<T>(typeof(T).GetKey(), position, rotation, parent, spawnInWorldSpace);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RecycleAll<T>() => this.RecycleAll(typeof(T).GetKey());
+        public void RecycleAll<T>() where T : notnull => this.RecycleAll(typeof(T).GetKey());
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Cleanup<T>(int retainCount = 1) => this.Cleanup(typeof(T).GetKey(), retainCount);
+        public void Cleanup<T>(int retainCount = 1) where T : notnull => this.Cleanup(typeof(T).GetKey(), retainCount);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Unload<T>() => this.Unload(typeof(T).GetKey());
+        public void Unload<T>() where T : notnull => this.Unload(typeof(T).GetKey());
 
         #endregion
     }
