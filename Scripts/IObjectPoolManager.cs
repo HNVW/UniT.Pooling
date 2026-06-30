@@ -8,7 +8,7 @@ namespace UniT.Pooling
     using UniT.Extensions;
     using UnityEngine;
 
-    public interface IObjectPoolManager : IDisposable
+    public interface IObjectPoolManager
     {
         public event Action<GameObject> Instantiated;
 

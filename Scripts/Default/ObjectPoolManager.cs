@@ -14,7 +14,7 @@ namespace UniT.Pooling.Default
     using ILogger = UniT.Logging.ILogger;
     using Object = UnityEngine.Object;
 
-    public sealed class ObjectPoolManager : IObjectPoolManager
+    public sealed class ObjectPoolManager : IObjectPoolManager, IDisposable
     {
         #region Constructor
 
@@ -47,7 +47,7 @@ namespace UniT.Pooling.Default
 
         async UniTask IObjectPoolManager.LoadAsync(object key, int count, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var prefab = await this.keyToPrefab.GetOrAddAsync(key, static state => state.assetsManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (assetsManager: this.assetManager, key, progress, cancellationToken));
+            var prefab = await this.keyToPrefab.GetOrAddAsync(key, static state => state.assetManager.LoadAsync<GameObject>(state.key, state.progress, state.cancellationToken), (this.assetManager, key, progress, cancellationToken));
             this.Load(prefab, count);
         }
 
