@@ -1,5 +1,7 @@
 {
   "name": "UniT.Pooling.Default.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Pooling.Default",
     "VContainer"

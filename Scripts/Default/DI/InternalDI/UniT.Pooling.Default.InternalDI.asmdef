@@ -1,5 +1,7 @@
 {
   "name": "UniT.Pooling.Default.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Pooling.Default",
     "UniT.DI.InternalDI"

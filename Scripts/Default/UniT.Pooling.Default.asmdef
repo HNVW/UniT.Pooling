@@ -1,5 +1,6 @@
 {
   "name": "UniT.Pooling.Default",
+  "overrideReferences": true,
   "references": [
     "UniT.Pooling",
     "UniT.Extensions",

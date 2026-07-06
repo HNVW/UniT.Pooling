@@ -1,5 +1,7 @@
 {
   "name": "UniT.Pooling.Default.Zenject",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Pooling.Default",
     "Zenject"
