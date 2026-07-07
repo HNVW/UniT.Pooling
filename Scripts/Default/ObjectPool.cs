@@ -13,7 +13,7 @@ namespace UniT.Pooling.Default
 
         [SerializeField] private GameObject prefab = null!;
 
-        private readonly Stack<GameObject>   pooledObjects  = new();
+        private readonly Stack<GameObject> pooledObjects = new();
         private readonly HashSet<GameObject> spawnedObjects = new();
 
         public static ObjectPool Construct(GameObject prefab, Transform parent)
