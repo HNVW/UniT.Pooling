@@ -4,7 +4,7 @@ namespace UniT.Pooling.Default
     using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine;
 
     public sealed class ObjectPool : MonoBehaviour
@@ -62,7 +62,7 @@ namespace UniT.Pooling.Default
         public void Recycle(GameObject instance)
         {
             if (!this.spawnedObjects.Remove(instance)) throw new InvalidOperationException($"{instance.name} was not spawned from {this.name}");
-            if (instance)
+            if (instance && this)
             {
                 instance.transform.SetParent(this.transform, false);
                 this.pooledObjects.Push(instance);

@@ -1,7 +1,7 @@
 #nullable enable
 namespace UniT.Pooling.Default.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
     public static class ObjectPoolManagerInternalDI
     {
