@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Pooling.Default.DI
+namespace UniT.Pooling.DI
 {
     using Zenject;
 
