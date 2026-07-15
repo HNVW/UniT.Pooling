@@ -3,7 +3,6 @@ namespace UniT.Pooling
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
     using Extensions;
     using UnityEngine;
 
@@ -53,7 +52,6 @@ namespace UniT.Pooling
             return instance;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Spawn<T>(Vector3? position = null, Quaternion? rotation = null, Transform? parent = null, bool spawnInWorldSpace = true) where T : notnull
         {
             return this.Spawn(position, rotation, parent, spawnInWorldSpace).GetComponentOrThrow<T>();
@@ -75,7 +73,6 @@ namespace UniT.Pooling
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Recycle<T>(T instance) where T : Component
         {
             if (!instance) return;
