@@ -107,12 +107,13 @@ namespace UniT.Pooling
         {
             this.prefabToPool.GetOrAdd(prefab, static state =>
             {
-                var pool = ObjectPool.Construct(state.prefab, state.@this.poolsContainer);
-                pool.Instantiated += state.@this.OnInstantiated;
-                pool.Spawned += state.@this.OnSpawned;
-                pool.Recycled += state.@this.OnRecycled;
-                pool.CleanedUp += state.@this.OnCleanedUp;
-                state.@this.logger.Debug($"Instantiated {pool.name}");
+                var (@this, prefab) = state;
+                var pool = ObjectPool.Construct(prefab, @this.poolsContainer);
+                pool.Instantiated += @this.OnInstantiated;
+                pool.Spawned += @this.OnSpawned;
+                pool.Recycled += @this.OnRecycled;
+                pool.CleanedUp += @this.OnCleanedUp;
+                @this.logger.Debug($"Instantiated {pool.name}");
                 return pool;
             }, (@this: this, prefab)).Load(count);
         }
