@@ -123,7 +123,7 @@ namespace UniT.Pooling
             if (!this.prefabToPool.ContainsKey(prefab))
             {
                 this.Load(prefab, 1);
-                this.logger.Warning($"Auto loaded {prefab.name} pool. Consider preload it with `Load` or `LoadAsync` for better performance.");
+                this.logger.Warning($"Auto loaded {prefab.name} pool. Preload it with `Load` for better performance.");
             }
             var pool = this.prefabToPool[prefab];
             var instance = pool.Spawn(position, rotation, parent, spawnInWorldSpace);
