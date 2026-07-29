@@ -115,7 +115,7 @@ namespace UniT.Pooling
                 pool.CleanedUp += @this.OnCleanedUp;
                 @this.logger.Debug($"Instantiated {pool.name}");
                 return pool;
-            }, (@this: this, prefab)).Load(count);
+            }, (this, prefab)).Load(count);
         }
 
         private GameObject Spawn(GameObject prefab, Vector3? position, Quaternion? rotation, Transform? parent, bool spawnInWorldSpace)
