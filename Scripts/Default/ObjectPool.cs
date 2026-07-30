@@ -81,7 +81,7 @@ namespace UniT.Pooling
 
         public void RecycleAll()
         {
-            this.spawnedObjects.SafeForEach(this.Recycle);
+            this.spawnedObjects.SnapshotForEach(this.Recycle);
         }
 
         public void Cleanup(int retainCount = 1)

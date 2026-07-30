@@ -88,8 +88,8 @@ namespace UniT.Pooling
 
         void IDisposable.Dispose()
         {
-            this.keyToPrefab.Keys.SafeForEach(this.Unload);
-            this.prefabToPool.Keys.SafeForEach(this.Unload);
+            this.keyToPrefab.Keys.SnapshotForEach(this.Unload);
+            this.prefabToPool.Keys.SnapshotForEach(this.Unload);
             if (this.poolsContainer) Object.Destroy(this.poolsContainer.gameObject);
             this.logger.Debug("Disposed");
         }
